@@ -1,5 +1,6 @@
 from __future__ import annotations
 import datetime as dt
+import logging
 from aiohttp import ClientSession
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -7,6 +8,8 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import dt as dt_util
 from .const import BASE_API, DOMAIN
 from .oauth import async_refresh_tokens, TokenStore
+
+_LOGGER = logging.getLogger(__name__)
 
 class MercuryClient:
     def __init__(self, session: ClientSession, base_url: str, token_getter, api_subscription_key: str):
@@ -33,7 +36,7 @@ class MercuryCoordinator(DataUpdateCoordinator):
     def __init__(self, hass: HomeAssistant, entry):
         super().__init__(
             hass,
-            logger=None,  # Will use default logger
+            logger=_LOGGER,
             name=DOMAIN,
             update_interval=dt.timedelta(minutes=entry.options.get("poll_minutes", 15))
         )
