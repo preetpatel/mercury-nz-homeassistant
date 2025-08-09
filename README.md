@@ -1,5 +1,7 @@
 # Mercury NZ Home Assistant Integration
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+
 An unofficial Home Assistant integration for Mercury NZ electricity customers to monitor their power usage and costs.
 
 ## Features
@@ -13,31 +15,47 @@ An unofficial Home Assistant integration for Mercury NZ electricity customers to
 ## Prerequisites
 
 - Home Assistant 2023.1 or newer
+- [HACS](https://hacs.xyz/) installed (recommended for easy installation and updates)
 - Mercury NZ account with API access
 - OAuth2 credentials (Client ID and refresh token)
 
 ## Installation
 
-### Method 1: Manual Installation
+### Method 1: HACS (Recommended)
+
+#### Add as Custom Repository
+
+1. Open HACS in your Home Assistant instance
+2. Click the three dots menu in the top right corner
+3. Select **Custom repositories**
+4. Add the repository:
+   - **Repository**: `https://github.com/preetpatel/mercury-nz-homeassistant`
+   - **Category**: `Integration`
+5. Click **Add**
+6. Close the custom repositories window
+7. Click **+ Explore & Download Repositories**
+8. Search for "Mercury NZ"
+9. Click **Download**
+10. Restart Home Assistant
+
+### Method 2: Manual Installation
 
 1. Download this repository
-2. Copy the `mercury_nz` folder to your Home Assistant's `custom_components` directory:
+2. Copy the `custom_components/mercury_nz` folder to your Home Assistant's `custom_components` directory
+3. Your Home Assistant configuration directory should look like:
    ```
-   custom_components/
-   └── mercury_nz/
-       ├── __init__.py
-       ├── manifest.json
-       ├── config_flow.py
-       ├── const.py
-       ├── coordinator.py
-       ├── oauth.py
-       └── sensor.py
+   config/
+   └── custom_components/
+       └── mercury_nz/
+           ├── __init__.py
+           ├── manifest.json
+           ├── config_flow.py
+           ├── const.py
+           ├── coordinator.py
+           ├── oauth.py
+           └── sensor.py
    ```
-3. Restart Home Assistant
-
-### Method 2: HACS (Coming Soon)
-
-This integration is not yet available in HACS but may be added in the future.
+4. Restart Home Assistant
 
 ## Configuration
 
