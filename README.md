@@ -66,6 +66,7 @@ You'll need the following information from your Mercury NZ account:
 - **Account ID**: Your account identifier
 - **Service ID**: Your electricity service identifier
 - **Client ID**: OAuth2 client identifier
+- **API Subscription Key**: Azure API Management subscription key (Ocp-Apim-Subscription-Key)
 - **Refresh Token**: Initial OAuth2 refresh token
 
 ### Step 2: Add Integration in Home Assistant
@@ -78,6 +79,7 @@ You'll need the following information from your Mercury NZ account:
    - Account ID
    - Service ID
    - Client ID
+   - API Subscription Key
    - Refresh Token
    - (Optional) Custom token URL
    - (Optional) OAuth2 scope
@@ -187,6 +189,7 @@ cards:
 This integration uses Mercury NZ's self-service API:
 - **Base URL**: `https://apis.mercury.co.nz/selfservice/v1`
 - **Authentication**: OAuth2 with refresh token flow
+- **API Management**: Requires Ocp-Apim-Subscription-Key header
 - **Data**: Hourly electricity usage and cost information
 
 ## Development

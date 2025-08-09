@@ -10,6 +10,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema({
     vol.Required("account_id"): str,
     vol.Required("service_id"): str,
     vol.Required("client_id"): str,
+    vol.Required("api_subscription_key"): str,
     vol.Optional("scope"): str,
     vol.Optional("token_url", default=DEFAULT_TOKEN_URL): str,
     vol.Required("refresh_token"): str,

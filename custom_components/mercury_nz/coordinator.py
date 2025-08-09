@@ -8,15 +8,19 @@ from .const import BASE_API, DOMAIN
 from .oauth import async_refresh_tokens, TokenStore
 
 class MercuryClient:
-    def __init__(self, session: ClientSession, base_url: str, token_getter):
+    def __init__(self, session: ClientSession, base_url: str, token_getter, api_subscription_key: str):
         self._session = session
         self._base = base_url
         self._get_token = token_getter
+        self._api_subscription_key = api_subscription_key
 
     async def get_hourly_usage(self, customer_id, account_id, service_id, start_date, end_date):
         url = f"{self._base}/customers/{customer_id}/accounts/{account_id}/services/electricity/{service_id}/usage"
         params = {"interval": "hourly", "startDate": start_date, "endDate": end_date}
-        headers = {"Authorization": f"Bearer {self._get_token()}"}
+        headers = {
+            "Authorization": f"Bearer {self._get_token()}",
+            "Ocp-Apim-Subscription-Key": self._api_subscription_key
+        }
         async with self._session.get(url, params=params, headers=headers) as resp:
             if resp.status == 401:
                 raise PermissionError("Access token expired or invalid")
@@ -31,7 +35,10 @@ class MercuryCoordinator(DataUpdateCoordinator):
         self.store = TokenStore(hass)
         self.session: ClientSession = hass.helpers.aiohttp_client.async_get_clientsession(hass)
         self._tokens: dict | None = None
-        self.client = MercuryClient(self.session, BASE_API, self._get_access_token)
+        api_key = entry.data.get("api_subscription_key")
+        if not api_key:
+            raise UpdateFailed("API Subscription Key is required")
+        self.client = MercuryClient(self.session, BASE_API, self._get_access_token, api_key)
 
     def _get_access_token(self) -> str:
         return self._tokens.get("access_token", "")
