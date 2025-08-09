@@ -3,6 +3,7 @@ import datetime as dt
 from aiohttp import ClientSession
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.util import dt as dt_util
 from .const import BASE_API, DOMAIN
 from .oauth import async_refresh_tokens, TokenStore
@@ -30,10 +31,15 @@ class MercuryClient:
 
 class MercuryCoordinator(DataUpdateCoordinator):
     def __init__(self, hass: HomeAssistant, entry):
-        super().__init__(hass, hass.helpers.event.async_track_time_interval, name=DOMAIN, update_interval=dt.timedelta(minutes=entry.options.get("poll_minutes", 15)))
+        super().__init__(
+            hass,
+            logger=None,  # Will use default logger
+            name=DOMAIN,
+            update_interval=dt.timedelta(minutes=entry.options.get("poll_minutes", 15))
+        )
         self.entry = entry
         self.store = TokenStore(hass)
-        self.session: ClientSession = hass.helpers.aiohttp_client.async_get_clientsession(hass)
+        self.session: ClientSession = async_get_clientsession(hass)
         self._tokens: dict | None = None
         api_key = entry.data.get("api_subscription_key")
         if not api_key:
