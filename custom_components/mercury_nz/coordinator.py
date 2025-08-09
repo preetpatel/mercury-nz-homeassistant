@@ -55,16 +55,21 @@ class MercuryCoordinator(DataUpdateCoordinator):
     async def _ensure_tokens(self):
         if self._tokens is None:
             self._tokens = await self.store.async_load()
-        if not self._tokens or "access_token" not in self._tokens:
+        
+        # If we have a refresh token but no access token, refresh to get one
+        if self._tokens and "refresh_token" in self._tokens and "access_token" not in self._tokens:
+            await self._refresh_and_save()
+        elif not self._tokens or "refresh_token" not in self._tokens:
             raise UpdateFailed("No tokens available. Reauthenticate in options.")
 
     async def _refresh_and_save(self):
+        from .const import DEFAULT_TOKEN_URL, DEFAULT_CLIENT_ID, DEFAULT_SCOPE
         data = await async_refresh_tokens(
             self.session,
-            self.entry.data["token_url"],
-            self.entry.data["client_id"],
+            self.entry.data.get("token_url", DEFAULT_TOKEN_URL),
+            self.entry.data.get("client_id", DEFAULT_CLIENT_ID),
             self._tokens["refresh_token"],
-            self.entry.data.get("scope")
+            self.entry.data.get("scope", DEFAULT_SCOPE)
         )
         self._tokens.update({
             "access_token": data["access_token"],

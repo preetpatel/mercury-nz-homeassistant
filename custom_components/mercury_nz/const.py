@@ -5,4 +5,6 @@ TOKEN_STORAGE_KEY = f"{DOMAIN}_tokens"
 
 DEFAULT_POLL_MINUTES = 15
 DEFAULT_TOKEN_URL = "https://login.mercury.co.nz/fc07dca7-cd6a-4578-952b-de7a7afaebdc/b2c_1a_signup_signin/oauth2/v2.0/token"
+DEFAULT_CLIENT_ID = "4c8c2c47-24cd-485d-aad9-12f3d95b3ceb"
+DEFAULT_SCOPE = "https://login.mercury.co.nz/aded9884-533e-4081-a4ce-87b0d4e80a45/customer:write https://login.mercury.co.nz/aded9884-533e-4081-a4ce-87b0d4e80a45/customer:read"
 BASE_API = "https://apis.mercury.co.nz/selfservice/v1"

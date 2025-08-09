@@ -2,18 +2,18 @@ from __future__ import annotations
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResult
-from .const import DOMAIN, DEFAULT_TOKEN_URL
+from .const import DOMAIN, DEFAULT_TOKEN_URL, DEFAULT_CLIENT_ID, DEFAULT_SCOPE
 from .oauth import TokenStore
 
 STEP_USER_DATA_SCHEMA = vol.Schema({
     vol.Required("customer_id"): str,
     vol.Required("account_id"): str,
     vol.Required("service_id"): str,
-    vol.Required("client_id"): str,
     vol.Required("api_subscription_key"): str,
-    vol.Optional("scope"): str,
-    vol.Optional("token_url", default=DEFAULT_TOKEN_URL): str,
     vol.Required("refresh_token"): str,
+    vol.Optional("client_id", default=DEFAULT_CLIENT_ID): str,
+    vol.Optional("scope", default=DEFAULT_SCOPE): str,
+    vol.Optional("token_url", default=DEFAULT_TOKEN_URL): str,
 })
 
 STEP_OPTIONS_SCHEMA = vol.Schema({

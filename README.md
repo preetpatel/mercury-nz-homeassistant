@@ -65,7 +65,6 @@ You'll need the following information from your Mercury NZ account:
 - **Customer ID**: Your Mercury customer number
 - **Account ID**: Your account identifier
 - **Service ID**: Your electricity service identifier
-- **Client ID**: OAuth2 client identifier
 - **API Subscription Key**: Azure API Management subscription key (Ocp-Apim-Subscription-Key)
 - **Refresh Token**: Initial OAuth2 refresh token
 
@@ -78,11 +77,13 @@ You'll need the following information from your Mercury NZ account:
    - Customer ID
    - Account ID
    - Service ID
-   - Client ID
    - API Subscription Key
    - Refresh Token
-   - (Optional) Custom token URL
-   - (Optional) OAuth2 scope
+   
+   Advanced (optional - have defaults):
+   - Client ID (pre-filled with Mercury's default)
+   - OAuth2 scope (pre-filled with required scopes)
+   - Custom token URL (pre-filled with Mercury's endpoint)
 
 ### Step 3: Configure Options (Optional)
 
