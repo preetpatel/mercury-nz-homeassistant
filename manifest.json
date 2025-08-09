@@ -1,0 +1,10 @@
+{
+  "domain": "mercury_nz",
+  "name": "Mercury NZ (Unofficial)",
+  "version": "0.1.0",
+  "documentation": "https://github.com/preetpatel/mercury-nz-homeassistant",
+  "requirements": [],
+  "codeowners": ["@preetpatel"],
+  "iot_class": "cloud_polling",
+  "config_flow": true
+}
