@@ -208,7 +208,7 @@ This is an unofficial integration not affiliated with Mercury NZ. Use at your ow
 
 ## License
 
-[Add your license here]
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Support
 
