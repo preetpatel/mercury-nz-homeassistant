@@ -92,51 +92,102 @@ After adding the integration, you can configure:
 
 ## Sensors
 
-The integration creates two sensors showing data from 2 days ago (due to API delay):
+The integration creates two Energy Dashboard compatible sensors:
 
-### Mercury Usage Total kWh
-- **Entity ID**: `sensor.mercury_usage_total_kwh`
+### Mercury Energy Consumption
+- **Entity ID**: `sensor.mercury_energy_consumption`
 - **Unit**: kWh
-- **Description**: Total electricity consumption from 2 days ago (latest available)
-- **Attributes**: Hourly breakdown of usage
+- **Device Class**: energy
+- **State Class**: total_increasing
+- **Description**: Cumulative energy consumption that increases daily with new data
+- **Energy Dashboard**: ✅ Compatible - Shows in Grid Consumption
+- **Attributes**: 
+  - `hourly_breakdown`: Full 24-hour data from the latest day
+  - `daily_total_kwh`: Sum of the latest day's consumption
+  - `measurement_date`: Date of the current measurement data
+  - `last_update_date`: Last date that was processed
 
-### Mercury Usage Total Cost
-- **Entity ID**: `sensor.mercury_usage_total_cost`
+### Mercury Energy Cost
+- **Entity ID**: `sensor.mercury_energy_cost`
 - **Unit**: NZD
-- **Description**: Total cost from 2 days ago (latest available)
-- **Attributes**: Hourly breakdown of costs
+- **Device Class**: monetary
+- **State Class**: total
+- **Description**: Cumulative energy cost that increases daily
+- **Energy Dashboard**: ✅ Compatible - Can be used for cost tracking
+- **Attributes**: 
+  - `hourly_breakdown`: Full 24-hour cost data
+  - `daily_total_cost`: Sum of the latest day's cost
+  - `average_rate_per_kwh`: Calculated average rate
+  - `measurement_date`: Date of the current measurement data
 
-**Note**: Mercury's API has a 48-hour delay. For example, on August 9th, the sensors will show data from August 7th.
+**Important Notes**: 
+- Mercury's API has a 48-hour delay (e.g., on August 9th, data from August 7th is available)
+- Sensors update once per day when new data becomes available
+- Each update adds the complete 24-hour total to the cumulative value
+- Historical data accumulates over time for long-term statistics
+
+## Energy Dashboard Setup
+
+### Adding to Energy Dashboard
+
+1. Go to **Settings** → **Dashboards** → **Energy**
+2. Click **Add Consumption** in the Grid section
+3. Select **Mercury Energy Consumption** sensor
+4. Choose how to track costs:
+   - **Use entity with current price**: Enter a fixed price per kWh
+   - **Use an entity tracking the total costs**: Select **Mercury Energy Cost** sensor
+5. Click **Save**
+
+### Viewing Energy Data
+
+Once configured, the Energy Dashboard will show:
+- **Hourly consumption**: Bar chart showing when daily totals were added
+- **Daily consumption**: Total kWh per day
+- **Monthly consumption**: Accumulated monthly totals
+- **Cost tracking**: If configured, shows costs alongside consumption
+- **Statistics**: Long-term trends and comparisons
+
+**Note**: Due to the 48-hour API delay, the dashboard will update once per day with complete 24-hour data from 2 days ago.
 
 ## Example Automations
 
-### High Usage Alert
+### Daily Usage Alert
 ```yaml
 automation:
-  - alias: "High Power Usage Alert"
+  - alias: "Daily Usage Alert"
     trigger:
-      - platform: numeric_state
-        entity_id: sensor.mercury_usage_total_kwh
-        above: 50
-    action:
-      - service: notify.mobile_app
-        data:
-          message: "High power usage detected: {{ states('sensor.mercury_usage_total_kwh') }} kWh"
-```
-
-### Daily Usage Report
-```yaml
-automation:
-  - alias: "Daily Usage Report"
-    trigger:
-      - platform: time
-        at: "20:00:00"
+      - platform: state
+        entity_id: sensor.mercury_energy_consumption
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.state | float > trigger.from_state.state | float }}"
     action:
       - service: notify.mobile_app
         data:
           message: >
-            Today's usage: {{ states('sensor.mercury_usage_total_kwh') }} kWh
-            Cost: ${{ states('sensor.mercury_usage_total_cost') }}
+            New energy data available!
+            Daily usage: {{ state_attr('sensor.mercury_energy_consumption', 'daily_total_kwh') }} kWh
+            Daily cost: ${{ state_attr('sensor.mercury_energy_cost', 'daily_total_cost') }}
+            Date: {{ state_attr('sensor.mercury_energy_consumption', 'measurement_date') }}
+```
+
+### High Daily Usage Alert
+```yaml
+automation:
+  - alias: "High Daily Usage Alert"
+    trigger:
+      - platform: state
+        entity_id: sensor.mercury_energy_consumption
+    condition:
+      - condition: template
+        value_template: "{{ state_attr('sensor.mercury_energy_consumption', 'daily_total_kwh') | float > 30 }}"
+    action:
+      - service: notify.mobile_app
+        data:
+          message: >
+            High usage detected!
+            {{ state_attr('sensor.mercury_energy_consumption', 'daily_total_kwh') }} kWh used on 
+            {{ state_attr('sensor.mercury_energy_consumption', 'measurement_date') }}
 ```
 
 ## Dashboard Card Example
@@ -145,24 +196,32 @@ automation:
 type: vertical-stack
 cards:
   - type: sensor
-    entity: sensor.mercury_usage_total_kwh
+    entity: sensor.mercury_energy_consumption
     graph: line
-    name: Electricity Usage
+    name: Cumulative Energy Usage
+    detail: 2
     
   - type: sensor
-    entity: sensor.mercury_usage_total_cost
+    entity: sensor.mercury_energy_cost
     graph: line
-    name: Electricity Cost
+    name: Cumulative Energy Cost
+    detail: 2
+    
+  - type: entity
+    entity: sensor.mercury_energy_consumption
+    name: Latest Daily Usage
+    attribute: daily_total_kwh
+    unit: kWh
     
   - type: statistics-graph
     entities:
-      - sensor.mercury_usage_total_kwh
+      - sensor.mercury_energy_consumption
     stat_types:
-      - mean
-      - max
+      - change
     period:
       calendar:
         period: week
+    title: Daily Energy Consumption
 ```
 
 ## Troubleshooting
