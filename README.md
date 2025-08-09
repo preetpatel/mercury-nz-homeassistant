@@ -92,19 +92,21 @@ After adding the integration, you can configure:
 
 ## Sensors
 
-The integration creates two sensors:
+The integration creates two sensors showing data from 2 days ago (due to API delay):
 
 ### Mercury Usage Total kWh
 - **Entity ID**: `sensor.mercury_usage_total_kwh`
 - **Unit**: kWh
-- **Description**: Total electricity consumption for the current period
+- **Description**: Total electricity consumption from 2 days ago (latest available)
 - **Attributes**: Hourly breakdown of usage
 
 ### Mercury Usage Total Cost
 - **Entity ID**: `sensor.mercury_usage_total_cost`
 - **Unit**: NZD
-- **Description**: Total cost for the current period
+- **Description**: Total cost from 2 days ago (latest available)
 - **Attributes**: Hourly breakdown of costs
+
+**Note**: Mercury's API has a 48-hour delay. For example, on August 9th, the sensors will show data from August 7th.
 
 ## Example Automations
 

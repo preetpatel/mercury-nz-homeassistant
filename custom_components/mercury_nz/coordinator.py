@@ -83,8 +83,12 @@ class MercuryCoordinator(DataUpdateCoordinator):
         await self._ensure_tokens()
         # Get current time - Home Assistant handles timezone internally
         now = dt_util.now()
-        start = (now - dt.timedelta(days=1)).date().isoformat()
-        end = now.date().isoformat()
+        # API has 48-hour delay - fetch data from 2 days ago
+        # Format dates with time and NZ timezone for proper API response
+        start_date = (now - dt.timedelta(days=2)).date()
+        end_date = (now - dt.timedelta(days=1)).date()
+        start = f"{start_date.isoformat()}T00:00:00+12:00"
+        end = f"{end_date.isoformat()}T00:00:00+12:00"
         try:
             return await self.client.get_hourly_usage(
                 self.entry.data["customer_id"],
