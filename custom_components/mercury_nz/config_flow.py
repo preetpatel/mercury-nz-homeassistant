@@ -17,8 +17,7 @@ STEP_USER_DATA_SCHEMA = vol.Schema({
 })
 
 STEP_OPTIONS_SCHEMA = vol.Schema({
-    vol.Optional("poll_minutes", default=15): int,
-    vol.Optional("timezone"): str
+    vol.Optional("poll_minutes", default=15): int
 })
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):

@@ -89,7 +89,6 @@ You'll need the following information from your Mercury NZ account:
 
 After adding the integration, you can configure:
 - **Polling Interval**: How often to fetch data (default: 15 minutes)
-- **Timezone**: Your local timezone for accurate daily boundaries
 
 ## Sensors
 

@@ -81,8 +81,8 @@ class MercuryCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         await self._ensure_tokens()
-        tz = dt_util.get_time_zone(self.entry.options.get("timezone") or str(self.hass.config.time_zone))
-        now = dt_util.now(tz=tz)
+        # Get current time - Home Assistant handles timezone internally
+        now = dt_util.now()
         start = (now - dt.timedelta(days=1)).date().isoformat()
         end = now.date().isoformat()
         try:
